@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+    if(solicitudnoexiste)
+        .alert.alert-danger.alert-dismissible.fade.show(role='alert')
+            strong No encontrado!
+            |  #{solicitudnoexiste}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+    if(feliz)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{feliz}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+            script.
+
+                window.history.replaceState({}, document.title, "../" + "");
+    .container-fluid
+        .row(style="margin-left:10%;margin-top:5%;height:20%;") 
+            .col-5(style="background-color:black;color:white;padding:5px;")
+                form(action='login' method='post')
+                    if(incorrecto)
+                        label.form-label(style="color:red") *#{msjError}
+                    .mb-3
+                        label.form-label(for='mail') Ingrese un mail: 
+                        input#mail.form-control(type='text' name='mail' required)
+                    .mb-3
+                        label.form-label(for='contraseña') Ingrese Contraseña:
+                        input.form-control(type='password' name='contraseña' id='contraseña' required)
+                    br
+                    br
+                    input.btn.btn-primary(type='submit' value='logear')
+                h1 
+                    a.btn.btn-primary(href='/registrarse' ) Registrarse
+            .col-5(style="background-color:black;color:white;padding:5px;border-left: white 1px solid;")
+                br
+                br
+                h4 Buscar solicitud por N° de Ticket
+                form.d-flex(action="buscar" method="post" style="width:60%;margin-left:5%;")
+                    input.form-control.me-2(type='search' name="ticket" placeholder='#Ingrese N° de Ticket' aria-label='Search' required ,pattern="^[0-9]+$")
+                    button.btn.btn-success(type='submit') Buscar
+                     
+               
+  

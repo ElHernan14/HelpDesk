@@ -1,0 +1,92 @@
+extends ../layout
+
+block content
+    h1(style="background-color:black;color:white") Bienvenido a gestion de areas #{nombre} #{apellido}
+        //EMAIL INCORRECTO
+    if(correcto)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.pushState({}, document.title, "../../gestion/" + "areas");
+
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "areas");
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.pushState({}, document.title, "../../gestion/" + "areas");
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "areas");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "areas");
+    br
+    br 
+    a.btn.btn-dark(href='../gestion' style="color:white;margin-left:9%;") Volver
+    br
+    br
+    if(areas)
+        .container-fluid 
+            .col-10
+                table.table.table-dark.table-striped(style="margin-left:10%;")
+                    thead
+                        tr
+                            th(scope='col') ID area
+                            th(scope='col') Nombre
+                            th(scope='col' style="vertical-align:middle;padding-right:0px; text-align: center;") Gestionar
+                        each value in areas  
+                            tr
+                                td(style="vertical-align:middle;")= value.id_area
+                                td(style="vertical-align:middle;")= value.nombre_area
+                                td(style="vertical-align:middle;padding-right:0px;" HEIGHT="50")
+                                                                        if value.id_area > 3                                                                
+                                                                            a.btn.btn-primary(href="#" style='color:white;margin-left:42%' data-bs-toggle='modal' data-bs-target=`#modalnombre`)  Modificar Nombre
+                                                                        #modalnombre.modal.fade(style='top: 20%;' tabindex= '-1' )
+                                                                            .modal-dialog
+                                                                                .modal-content
+                                                                                    .modal-header
+                                                                                        h5#exampleModalLabel.modal-title(style ="color:black;") Modificar nombre de area:
+                                                                                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                                                    .modal-body
+                                                                                        form(action='areas/modificar' method='post')
+                                                                                            input(type="hidden", name="id_area" value=value.id_area)
+                                                                                            .mb-3  
+                                                                                                label.form-label(for='nombre') Nuevo Nombre: 
+                                                                                                input#nombre.form-control(name="nombre" type="text" required)
+                                                                                                if(error)
+                                                                                                    label(for="nombre" style="color:red;") *#{error}
+                                                                                            .modal-footer
+                                                                                                button.btn.btn-primary(type='submit') Modificar
+    if(areaexiste)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalnombre'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "areas"); 
+        
+        
+                                                                                                                                   
+                                                                  

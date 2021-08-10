@@ -1,0 +1,168 @@
+extends ../layout
+
+block empleado 
+        li.nav-item.dropdown
+            a#navbarDropdown.pull-right.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false' style="color:white")
+                svg.bi.bi-person-fill(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                    path(d='M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z')
+            ul.dropdown-menu.pull-left(aria-labelledby='navbarDropdown')
+                li.pull-left
+                a.dropdown-item(href='#modalperfil' data-bs-toggle='modal' data-bs-target='#modalperfil') Editar perfil        
+                li.pull-left
+                a.dropdown-item(href='#modalcontrasena' data-bs-toggle='modal' data-bs-target='#modalcontrasena') Cambiar contraseña
+            #modalcontrasena.modal.fade(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar contraseña 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="area/modificarcontrasena", method="post")
+                                .mb-3
+                                    label.form-label(for='actual') Ingrese contraseña actual:
+                                    input#dni.form-control(type='text' name='actual' required)
+                                    if(contraseñainvalida)
+                                        label(for="actual" style="color:red;") *#{contraseñainvalida}
+                                .mb-3
+                                    label.form-label(for='nueva') Ingrese nueva contraseña:
+                                    input#nombre.form-control(type='text' name='nueva' required)
+                                .mb-3
+                                    label.form-label(for='copia') Ingrese nuevamente:
+                                    input#nombre.form-control(type='text' name='copia' required)
+                                    if(noiguales)
+                                        label(for="copia" style="color:red;") *#{noiguales}
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar 
+                                    button.btn.btn-primary(type='submit') Cambiar contraseña 
+            #modalperfil.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar datos de contacto 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="area/modificarcontacto", method="post")
+                                .mb-3
+                                    label.form-label(for='telefono') Cambiar numero de telefono:
+                                    input#telefono.form-control(type='text' name='telefono' placeholder=telefono required ,pattern="^[0-9]+$")
+                                .mb-3
+                                    label.form-label(for='mail') Cambiar Email:
+                                    input#mail.form-control(type='mail' name='mail' placeholder=email required)
+                                    if(invalido)
+                                        label(for="mail" style="color:red;") *#{invalido} 
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                    button.btn.btn-primary(type='submit') Actualizar
+block content
+    h1(style="background-color:black;color:white") Bienvenido a #{area} #{nombre} #{apellido}
+    //EMAIL INCORRECTO
+    if(correcto)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+
+        script.
+            window.history.replaceState({}, document.title, "../../" + "area");
+
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "area");
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+            window.history.replaceState({}, document.title, "../../" + "area");
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "area");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "area");
+    .container-fluid
+        .row(style="margin: 5px;")
+                if(solicitudes != '')
+                        table.table.table-dark.table-striped
+                            thead
+                                tr
+                                    th(scope='col') Fecha de ingreso
+                                    th(scope='col') Prioridad
+                                    th(scope='col') Estado
+                                    th(scope='col') Detalle Solicitud
+                                    th(scope='col') Detalle Razon
+                                    th(scope='col') Manejar solicitud 
+                                each value in solicitudes  
+                                    tr(style="font-size: 18px;")
+                                        td(style="vertical-align:middle;")= value.fecha_ingreso 
+                                        td(style="vertical-align:middle;") 
+                                                                        if value.prioridad == 'alta'
+                                                                            p(style="background-color:red;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                                                        if value.prioridad == 'media'
+                                                                            p(style="background-color:yellow;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;color:black;")= value.prioridad
+                                                                        if value.prioridad == 'baja'
+                                                                            p(style="background-color:green;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                        td(style="vertical-align:middle;")= value.estado
+                                        td(style="vertical-align:middle;")= value.detalle 
+                                        td(style="vertical-align:middle;")= value.detalle_razon
+                                        td  
+                                                a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalsolicitud${value.valorUnico}`)  Transferir Solicitud
+                                                br
+                                                h1
+                                                a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalresolver${value.valorUnico}`)  Resolver Solicitud
+                                            .modal.fade(style='top: 20%;' tabindex='-1' id=`modalsolicitud${value.valorUnico}`)
+                                                .modal-dialog
+                                                    .modal-content
+                                                        .modal-header
+                                                            h5#exampleModalLabel.modal-title Pasar Solicitud
+                                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                        .modal-body
+                                                            form(action='area/pasarsolicitud' method='post')
+                                                                input(type="hidden", name="id_solicitud" value=value.id_solicitud)
+                                                                input(type="hidden", name="fecha_ingreso" value=value.fecha_ingreso)
+                                                                br
+                                                                label(for='area') Asignar Area: 
+                                                                select#area(name='area')
+                                                                    each value in areas
+                                                                        option(name="calidad" value=value.id_area) -- #{value.nombre_area}
+                                                                br
+                                                                br
+                                                                .mb-3 
+                                                                    label.form-label(for='razon') Detalle razon: 
+                                                                    textarea#razon.form-control(name="razon", rows="5" required)
+                                                                .modal-footer
+                                                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                                                    button.btn.btn-primary(type='submit') Enviar
+                                            .modal.fade(style='top: 20%;' tabindex='-1' id=`modalresolver${value.valorUnico}`)
+                                                .modal-dialog
+                                                    .modal-content
+                                                        .modal-header
+                                                            h5#exampleModalLabel.modal-title Solucionar Reclamo
+                                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                        .modal-body
+                                                            form(action='area/resolversolicitud' method='post')
+                                                                input(type="hidden", name="id_solicitud" value=value.id_solicitud)
+                                                                input(type="hidden", name="fecha_ingreso" value=value.fecha_ingreso)
+                                                                .mb-3 
+                                                                    label.form-label(for='solucion') Detalle Solucion: 
+                                                                    textarea#solucion.form-control(name="solucion", rows="5" required)
+                                                                .modal-footer
+                                                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                                                    button.btn.btn-primary(type='submit') Resolver                        
+                                                                                                                                                                                                    
+                else 
+                    h1(style="background-color:black;color:white") No hay solicitudes cargadas

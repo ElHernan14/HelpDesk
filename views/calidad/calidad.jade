@@ -1,0 +1,186 @@
+extends ../layout
+
+block content
+    h1(style="background-color:black;color:white") Bienvenido a Area Calidad #{nombre} #{apellido}
+        //EMAIL INCORRECTO
+    if(correcto)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.replaceState({}, document.title, "../../" + "calidad");
+
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "calidad");
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.replaceState({}, document.title, "../../" + "calidad");
+        
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "calidad");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "calidad");
+    br
+    br  
+    .container-fluid
+        .row(style="margin: 5px;")
+            .col-12
+                if(notificaciones != '')
+                    .d-grid.gap-2
+                        .card(style="background-color:black;color:white;padding: 0px;text-align:center;") 
+                             h5 
+                                |NOTIFICACIONES  
+                                span(style="font-size:14px;color:graylight;font-style:italic;") (#{cantidad} pendiente/s)        
+                        each value in notificaciones
+                            .d-grid.gap-2(style="background-color:black;padding:3px;")
+                                a(data-bs-toggle='collapse' href=`#collapse${value.id_notificacion}` role='button' aria-expanded='false' aria-controls='collapseExample' style="background-color:black;color:white;padding: 0px;text-decoration: none;") Fecha: #{value.fecha}     
+                            div(id=`collapse${value.id_notificacion}`).collapse
+                                table.table.table-dark(style="background-color:black;color:white;")
+                                    tr
+                                        th(scope='col') Descripcion:
+                                        th(scope='col') Prioridad:
+                                        th(scope='col') Area proveniente:
+                                        th(scope='col') Detalle de la solicitud:
+                                        th(scope='col') Manejar:
+                                    tr(style="font-size: 18px;opacity:0.9;")
+                                        td(style="vertical-align:middle;")= value.descripcion 
+                                        td(style="vertical-align:middle;")
+                                                                        if value.prioridad == 'alta'
+                                                                            p(style="background-color:red;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                                                        if value.prioridad == 'media'
+                                                                            p(style="background-color:yellow;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;color:black;")= value.prioridad
+                                                                        if value.prioridad == 'baja'
+                                                                            p(style="background-color:green;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                        td(style="vertical-align:middle;")= value.nombreArea
+                                        td(style="vertical-align:middle;")= value.detalle_solicitud
+                                        td(style="vertical-align:middle;")
+                                                                                a.btn.btn-success(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#resolucion${value.id_notificacion}`)  Dar resolucion
+                                                                            div(id=`resolucion${value.id_notificacion}` style='top: 20%;' tabindex='-1').modal.fade
+                                                                                .modal-dialog
+                                                                                    .modal-content
+                                                                                        .modal-header
+                                                                                            h5#exampleModalLabel.modal-title Establecer una resolucion:
+                                                                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                                                        .modal-body
+                                                                                            form(action="calidad/resolucion", method="post")
+                                                                                                input(type="hidden", name="id_notificacion" value=value.id_notificacion)
+                                                                                                input(type="hidden", name="fecha_historial" value=value.fecha_historial)
+                                                                                                input(type="hidden", name="id_solicitud_historial" value=value.id_solicitud_historial)
+                                                                                                input(type="hidden", name="id_solicitud_historial" value=value.id_area_historial)
+                                                                                                br
+                                                                                                label(for='tipo') Elegir tipo de resolucion: 
+                                                                                                select#resolucion(name='tipo')
+                                                                                                    option(name="tipo" value='resuelto') -- Resuelto
+                                                                                                    option(name="tipo" value='no resuelto') -- No resuelto
+                                                                                                br
+                                                                                                br
+                                                                                                .mb-3 
+                                                                                                    label.form-label(for='resolucion') Detalle resolucion: 
+                                                                                                    textarea#razon.form-control(name="resolucion", rows="5" required) 
+                                                                                                .modal-footer
+                                                                                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                                                                                    button.btn.btn-primary(type='submit') Enviar
+                else 
+                    .d-grid.gap-2(style="display:none;")  
+                        a.btn.btn-dark(data-bs-toggle='collapse' href='#collapseExample' role='button' aria-expanded='false' aria-controls='collapseExample' style="background-color:black;color:white;") NOTIFICACIONES: #{cantidad}     
+                    #collapseExample.collapse(style="background-color:black;color:white;opacity: 0.9;")
+                        br
+                        h3 Sin Notificaciones por el momento
+                        br
+        br
+        .row(style="margin: 5px;")                 
+            .col-12 
+                if(solicitudes != '')
+                        .d-grid.gap-2
+                                .card(style="background-color:black;color:white;padding: 0px;text-align:center;") 
+                                    h5 
+                                        |SOLICITUDES TRANSFERIDAS   
+                                table.table.table-dark.table-striped
+                                    thead
+                                        tr
+                                            th(scope='col') Fecha de ingreso
+                                            th(scope='col') Prioridad
+                                            th(scope='col') Estado
+                                            th(scope='col') Detalle Solicitud
+                                            th(scope='col') Detalle Razon
+                                            th(scope='col') Manejar solicitud 
+                                        each value in solicitudes  
+                                            tr(style="font-size: 18px;")
+                                                td(style="vertical-align:middle;")= value.fecha_ingreso 
+                                                td(style="vertical-align:middle;")
+                                                                                if value.prioridad == 'alta'
+                                                                                    p(style="background-color:red;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                                                                if value.prioridad == 'media'
+                                                                                    p(style="background-color:yellow;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;color:black;")= value.prioridad
+                                                                                if value.prioridad == 'baja'
+                                                                                    p(style="background-color:green;text-align:center;text-transform: uppercase;margin-top:20px;font-weight:bold;")= value.prioridad
+                                                td(style="vertical-align:middle;")= value.estado
+                                                td(style="vertical-align:middle;")= value.detalle 
+                                                td(style="vertical-align:middle;")= value.detalle_razon
+                                                td  
+                                                        a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalsolicitud${value.valorUnico}`)  Transferir Solicitud
+                                                        br
+                                                        h1
+                                                        a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalresolver${value.valorUnico}`)  Resolver Solicitud
+                                                   div(id=`modalsolicitud${value.valorUnico}`).modal.fade(style='top: 20%;' tabindex='-1' )
+                                                        .modal-dialog
+                                                            .modal-content
+                                                                .modal-header
+                                                                    h5#exampleModalLabel.modal-title Pasar Solicitud
+                                                                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                                .modal-body
+                                                                    form(action='calidad/pasarsolicitud' method='post')
+                                                                        input(type="hidden", name="id_solicitud" value=value.id_solicitud)
+                                                                        input(type="hidden", name="fecha_ingreso" value=value.fecha_ingreso)
+                                                                        br
+                                                                        label(for='area') Asignar Area: 
+                                                                        select#area(name='area')
+                                                                            each value in areas
+                                                                                option(name="calidad" value=value.id_area) -- #{value.nombre_area}
+                                                                        br
+                                                                        br
+                                                                        .mb-3 
+                                                                            label.form-label(for='razon') Detalle razon: 
+                                                                            textarea#razon.form-control(name="razon", rows="5" required)
+                                                                        .modal-footer
+                                                                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                                                            button.btn.btn-primary(type='submit') Enviar
+                                                     div(id=`modalresolver${value.valorUnico}`).modal.fade(style='top: 20%;' tabindex='-1' )
+                                                        .modal-dialog
+                                                            .modal-content
+                                                                .modal-header
+                                                                    h5#exampleModalLabel.modal-title Solucionar Reclamo
+                                                                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                                .modal-body
+                                                                    form(action='calidad/resolversolicitud' method='post')
+                                                                        input(type="hidden", name="id_solicitud" value=value.id_solicitud)
+                                                                        input(type="hidden", name="fecha_ingreso" value=value.fecha_ingreso)
+                                                                        .mb-3 
+                                                                            label.form-label(for='solucion') Detalle Solucion: 
+                                                                            textarea#solucion.form-control(name="solucion", rows="5" required)
+                                                                        .modal-footer
+                                                                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                                                            button.btn.btn-primary(type='submit') Resolver

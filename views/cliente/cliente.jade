@@ -1,0 +1,213 @@
+extends ../layout
+
+block cliente     
+        li.nav-item.dropdown
+            a#navbarDropdown.pull-right.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false' style="color:white")
+                svg.bi.bi-person-fill(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                    path(d='M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z')
+            ul.dropdown-menu.pull-left(aria-labelledby='navbarDropdown')
+                li.pull-left
+                a.dropdown-item(href='#modalperfil' data-bs-toggle='modal' data-bs-target='#modalperfil') Editar perfil        
+                li.pull-left
+                a.dropdown-item(href='#modalcontrasena' data-bs-toggle='modal' data-bs-target='#modalcontrasena') Cambiar contraseña
+            #modalcontrasena.modal.fade(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar contraseña 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="cliente/modificarcontrasena", method="post")
+                                .mb-3
+                                    label.form-label(for='actual') Ingrese contraseña actual:
+                                    input#dni.form-control(type='text' name='actual' required)
+                                    if(contraseñainvalida)
+                                        label(for="actual" style="color:red;") *#{contraseñainvalida}
+                                .mb-3
+                                    label.form-label(for='nueva') Ingrese nueva contraseña:
+                                    input#nombre.form-control(type='text' name='nueva' required)
+                                .mb-3
+                                    label.form-label(for='copia') Ingrese nuevamente:
+                                    input#nombre.form-control(type='text' name='copia' required)
+                                    if(noiguales)
+                                        label(for="copia" style="color:red;") *#{noiguales}
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar 
+                                    button.btn.btn-primary(type='submit') Cambiar contraseña 
+            #modalperfil.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar datos de contacto 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="cliente/modificarcontacto", method="post")
+                                .mb-3
+                                    label.form-label(for='telefono') Cambiar numero de telefono:
+                                    input#telefono.form-control(type='text' name='telefono' placeholder=telefono required ,pattern="^[0-9]+$")
+                                .mb-3
+                                    label.form-label(for='mail') Cambiar Email:
+                                    input#mail.form-control(type='mail' name='mail' placeholder=email required)
+                                    if(invalido)
+                                        label(for="mail" style="color:red;") *#{invalido} 
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                    button.btn.btn-primary(type='submit') Actualizar             
+
+block content
+    //EMAIL INCORRECTO
+    if(correcto)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.replaceState({}, document.title, "../../" + "cliente");
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "cliente");
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.replaceState({}, document.title, "../../" + "cliente");
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "cliente");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "cliente");
+     
+    h1(style="background-color:black;color:white") Bienvenido #{nombre} #{apellido}
+    button.btn.btn-success
+        a(href='/cliente/cargarsolicitud' style="color:white;text-decoration:none;") Cargar una solicitud
+    br
+    br
+    if(solicitudes != '')
+        table.table.table-dark.table-striped
+            thead
+                tr
+                    th(scope='col') Ticket
+                    th(scope='col') Fecha
+                    th(scope='col') Detalle
+                    th(scope='col') Tipo
+                    th(scope='col') Seguimiento
+                each value in solicitudes  
+                    tr
+                        td(style="vertical-align:middle;")= value.ticket
+                        td(style="vertical-align:middle;")= value.fecha_solicitud 
+                        td(style="vertical-align:middle;")= value.detalle  
+                        td(style="vertical-align:middle;")= value.tipo 
+                        td    
+                            a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalsolicitud${value.idUnico}`)  Seguimiento
+                            if(value.resueltos != '')
+                                br
+                                h1
+                                span.badge.bg-success(style="padding: 10px;font-size:10px;") SOLICITUD RESUELTA
+                            else
+                                br
+                                h1 
+                                span.badge.bg-danger(style="padding: 10px;font-size:10px;") SIN RESOLVER
+                            .modal.fade(style='color:black;' tabindex='-1' id=`modalsolicitud${value.idUnico}`)
+                                .modal-dialog.modal-xl
+                                    .modal-content
+                                        .modal-header(style="background-color:darkgreen;")
+                                            h5#exampleModalLabel.modal-title(style="color: white;") Ver Seguimiento solicitud
+                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                        .modal-body
+                                            if (value.pendientes != '' || value.transferencias != '' || value.resueltos != '') 
+                                                p
+                                                    .d-grid.gap-2.col-6.mx-auto
+                                                        a.btn.btn-primary(data-bs-toggle='collapse' role='button' aria-expanded='true'  href=`#colapse${value.idUnico}`) Ver transferencias      
+                                                    div(id=`colapse${value.idUnico}`).collapse.multi-collapse
+                                                        .card.card-body(style="padding:0px")
+                                                            table.table.table-dark.table-striped
+                                                                thead
+                                                                    tr
+                                                                        th(scope='col') Fecha de ingreso
+                                                                        th(scope='col') Detalle razon
+                                                                        th(scope='col') Area responsable
+                                                                        th(scope='col') Empleado a cargo
+                                                                        th(scope='col') Fecha de egreso
+                                                                    if(value.transferidos)
+                                                                        each trans in value.transferidos
+                                                                            tr
+                                                                                td= trans.fecha_ingreso
+                                                                                td= trans.detalle_razon
+                                                                                td= trans.nombreArea  
+                                                                                td= trans.nombreEmpleado 
+                                                                                td= trans.fecha_egreso    
+                                                br
+                                                each res in value.resueltos
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Detalle solucion:
+                                                        tbody
+                                                            tr 
+                                                        td= res.detalle_solucion
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Area responsable:
+                                                        tbody 
+                                                            tr 
+                                                                td= res.nombreArea 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Fecha de Ingreso:
+                                                        tbody 
+                                                            tr 
+                                                                td= res.fecha_ingreso 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Empleado a cargo:
+                                                        tbody 
+                                                            tr 
+                                                                td= res.nombreEmpleado 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Fecha de Egreso:
+                                                        tbody 
+                                                            tr 
+                                                                td= res.fecha_egreso
+                                                if(value.pendientes != '')
+                                                    h4 Area actual:
+                                                    table.table.table-dark.table-striped
+                                                        thead
+                                                            tr
+                                                                th(scope='col') Fecha de ingreso
+                                                                th(scope='col') Area a cargo
+                                                        each pend in value.pendientes
+                                                            tr 
+                                                                td= pend.fecha_ingreso
+                                                                td= pend.nombreArea
+                                            else 
+                                                h3 Su solicitud se encuentra aun en HelpDesk                                    
+                                        .modal-footer(style="background-color:black;")
+                                            button.btn.btn-dark(type='button' data-bs-dismiss='modal' style="color:white") Cerrar                         
+    else 
+                        br
+                        h2(style="background-color:black;color:white") Sin solicitudes cargadas
+                        br
+               

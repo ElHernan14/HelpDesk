@@ -1,0 +1,251 @@
+extends ../layout 
+
+block empleado 
+        li.nav-item.dropdown
+            a#navbarDropdown.pull-right.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false' style="color:white")
+                svg.bi.bi-person-fill(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                    path(d='M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z')
+            ul.dropdown-menu.pull-left(aria-labelledby='navbarDropdown')
+                li.pull-left
+                a.dropdown-item(href='#modalperfil' data-bs-toggle='modal' data-bs-target='#modalperfil') Editar perfil        
+                li.pull-left
+                a.dropdown-item(href='#modalcontrasena' data-bs-toggle='modal' data-bs-target='#modalcontrasena') Cambiar contraseña
+            #modalcontrasena.modal.fade(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar contraseña 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="gestion/modificarcontrasena", method="post")
+                                .mb-3
+                                    label.form-label(for='actual') Ingrese contraseña actual:
+                                    input#dni.form-control(type='text' name='actual' required)
+                                    if(contraseñainvalida)
+                                        label(for="actual" style="color:red;") *#{contraseñainvalida}
+                                .mb-3
+                                    label.form-label(for='nueva') Ingrese nueva contraseña:
+                                    input#nombre.form-control(type='text' name='nueva' required)
+                                .mb-3
+                                    label.form-label(for='copia') Ingrese nuevamente:
+                                    input#nombre.form-control(type='text' name='copia' required)
+                                    if(noiguales)
+                                        label(for="copia" style="color:red;") *#{noiguales}
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar 
+                                    button.btn.btn-primary(type='submit') Cambiar contraseña 
+            #modalperfil.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5#exampleModalLabel.modal-title Modificar datos de contacto 
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="gestion/modificarcontacto", method="post")
+                                .mb-3
+                                    label.form-label(for='telefono') Cambiar numero de telefono:
+                                    input#telefono.form-control(type='text' name='telefono' placeholder=telefono required ,pattern="^[0-9]+$")
+                                .mb-3
+                                    label.form-label(for='mail') Cambiar Email:
+                                    input#mail.form-control(type='mail' name='mail' placeholder=email required)
+                                    if(invalido)
+                                        label(for="mail" style="color:red;") *#{invalido} 
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                    button.btn.btn-primary(type='submit') Actualizar             
+block gestion
+    li.nav-item
+        a.nav-link(href='#' data-bs-toggle='modal' data-bs-target='#modalempleado' style="color: white;") CARGAR EMPLEADO
+    #modalempleado.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h5#exampleModalLabel.modal-title Cargar nuevo empleado
+                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                .modal-body
+                    form(action="gestion/cargarempleado", method="post")
+                        .mb-3
+                            label.form-label(for='dni') Asigne DNI del empleado:
+                            input#dni.form-control(type='text' name='dni' required ,pattern="^[0-9]+$")
+                            if(dniexistente)
+                                label(for="area" style="color:red;") *#{dniexistente}
+                        .mb-3
+                            label.form-label(for='nombre') Asigne un nombre:
+                            input#nombre.form-control(type='text' name='nombre' required,pattern="^[A-Z a-z]+$")
+                        .mb-3
+                            label.form-label(for='apellido') Asigne un apellido:
+                            input#apellido.form-control(type='text' name='apellido' required,pattern="^[A-Z a-z]+$")
+                        .mb-3
+                            label.form-label(for='telefono') Asigne un Telefono:
+                            input#telefono.form-control(type='text' name='telefono' required ,pattern="^[0-9]+$")
+                        .mb-3
+                            label.form-label(for='contraseña') Asigne una contraseña:
+                            input#contrasena.form-control(type='text' name='contraseña' required)
+                        .mb-3
+                            label.form-label(for='mail') Asigne e-mail:
+                            input#mail.form-control(type='email' name='mail' required)
+                            if(emailexistente)
+                                label(for="mail" style="color:red;") *#{emailexistente}
+                        select#idarea(name="idarea" required)
+                            option(selected) -- Asignar a un area --
+                            each value in areas
+                                option(name="idarea" value=value.id_area) --Area #{value.nombre_area}
+                        .mb-3 
+                            label.form-label(for='fecha' required) Ingresar fecha de nacimiento: 
+                            input#fecha.form-control(type='date' name='fecha' required)
+                        .modal-footer
+                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                            button.btn.btn-primary(type='submit') Cargar
+    li.nav-item
+            a.nav-link(href='#' data-bs-toggle='modal' data-bs-target='#modalarea' style="color: white;") CARGAR AREA
+        #modalarea.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        h5#exampleModalLabel.modal-title Cargar nueva area
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        form(action="gestion/cargararea", method="post")
+                            .mb-3
+                                label.form-label(for='area' required) Asigne Nombre de Area:
+                                input#dni.form-control(type='text' name='area' required ,pattern="^[A-Z a-z]+$")
+                                if(areaexistente)
+                                    label(for="area" style="color:red;") *#{areaexistente} 
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                button.btn.btn-primary(type='submit') Crear area
+    ul.navbar-nav.me-auto.mb-2.mb-lg-0      
+        li.nav-item.dropdown
+            a#navbarDropdown.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false' style="color:white;")
+              | GESTION 
+            ul.dropdown-menu(aria-labelledby='navbarDropdown')
+              li
+                a.dropdown-item(href='./gestion/areas') Ver Areas
+              li
+                a.dropdown-item(href='./gestion/empleados') Mostrar empleados
+              li                       
+block content
+    h1(style="background-color:black;color:white") Bienvenido a Area de Gestion #{nombre} #{apellido}
+    if(empleadocargado)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{empleadocargado}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+            script.
+         
+                window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(areacargada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{areacargada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+            script.
+
+                window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(dniexistente)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalempleado'), {
+                keyboard: false
+            })
+            myModal.show();
+            
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(emailexistente)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalempleado'), {
+                keyboard: false
+            })
+            myModal.show();
+
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(areaexistente)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalarea'), {
+                keyboard: false
+            })
+            myModal.show();
+
+            window.history.pushState({}, document.title, "../../" + "gestion");
+    
+    //EMAIL INCORRECTO
+    if(correcto)    
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+
+            
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.replaceState({}, document.title, "../../" + "gestion");
+    .container-fluid 
+        .col-10
+            if (clientes != '')
+                .d-grid.gap-2(style="margin-left:10%")
+                        .card(style="background-color:black;color:white;padding: 0px;text-align:center;") 
+                            h5 
+                            |CLIENTES NUEVOS 
+                            span(style="font-size:14px;color:graylight;font-style:italic;") (#{cantidad} pendiente/s)
+                        table.table.table-dark.table-striped
+                                thead
+                                    tr
+                                        th(scope='col') Dni
+                                        th(scope='col') Nombre y apellido
+                                        th(scope='col') Telefono
+                                        th(scope='col') Email
+                                        th(scope='col') Estado
+                                        th(scope='col') Gestionar
+                                    each value in clientes  
+                                        tr
+                                            td(style="vertical-align:middle;")= value.dni
+                                            td(style="vertical-align:middle;")= value.nombre
+                                            td(style="vertical-align:middle;")= value.celular 
+                                            td(style="vertical-align:middle;")= value.mail 
+                                            td(style="vertical-align:middle;")= value.estado
+                                            td(style="vertical-align:middle;")
+                                                                                    form(action="/gestion/modificarestado", method="post")
+                                                                                        if value.estado == true
+                                                                                            input(type="hidden", name="dni" value=value.dni)
+                                                                                            input(type="hidden", name="estado" value=0)
+                                                                                            button.btn.btn-danger(style='color:white;' type="submit")  Anular Acceso
+                                                                                        else 
+                                                                                            input(type="hidden", name="dni" value=value.dni)
+                                                                                            input(type="hidden", name="estado" value=1)
+                                                                                            button.btn.btn-success(style='color:white;' type="submit")  Permitir Acceso
+            else 
+                    .d-grid.gap-2(style="margin-left:10%") 
+                                    a.btn.btn-dark(data-bs-toggle='collapse' href='#collapseExample' role='button' aria-expanded='false' aria-controls='collapseExample' style="background-color:black;color:white;") CLIENTES NUEVOS: #{cantidad}     
+                                #collapseExample.collapse(style="background-color:black;color:white;opacity: 0.9;")
+                                    br
+                                    h3 Sin clientes nuevos por el momento
+                                    br                                                                            

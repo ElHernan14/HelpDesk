@@ -1,0 +1,78 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    script(src="../stylesheets/bootstrap.bundle.js")
+    link(href="../stylesheets/bootstrap.css" rel="stylesheet")
+  block title  
+  body(style="background-image: url('../images/cropped-Hosting.jpg');")
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-success
+      .container-fluid
+        a.navbar-brand(href='../') HELPDESK 2.0
+        button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+                block gestion
+            ul.nav.justify-content-end
+              li.nav-item.dropdown(style="margin-right:100px;")
+                a#navbarDropdown.pull-right.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false' style="color:white")
+                    svg.bi.bi-person-fill(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                        path(d='M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z')
+                ul.dropdown-menu(aria-labelledby='navbarDropdown')
+                    li.pull-left
+                    a.dropdown-item(href='#modalperfil' data-bs-toggle='modal' data-bs-target='#modalperfil') Editar perfil        
+                    li.pull-left
+                    a.dropdown-item(href='#modalcontrasena' data-bs-toggle='modal' data-bs-target='#modalcontrasena') Cambiar contraseña
+                    li.pull-left
+                    hr.dropdown-divider
+                    li.pull-left
+                    a.dropdown-item(href="#{ruta}") #{cerrarsesion}
+                #modalcontrasena.modal.fade(tabindex='-1')
+                    .modal-dialog
+                        .modal-content
+                            .modal-header
+                                h5#exampleModalLabel.modal-title Modificar contraseña 
+                                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            .modal-body
+                                form(action="#{action}/modificarcontrasena", method="post")
+                                    .mb-3
+                                        label.form-label(for='actual') Ingrese contraseña actual:
+                                        input#dni.form-control(type='text' name='actual' required)
+                                        if(contraseñainvalida)
+                                            label(for="actual" style="color:red;") *#{contraseñainvalida}
+                                    .mb-3
+                                        label.form-label(for='nueva') Ingrese nueva contraseña:
+                                        input#nombre.form-control(type='text' name='nueva' required)
+                                    .mb-3
+                                        label.form-label(for='copia') Ingrese nuevamente:
+                                        input#nombre.form-control(type='text' name='copia' required)
+                                        if(noiguales)
+                                            label(for="copia" style="color:red;") *#{noiguales}
+                                    .modal-footer
+                                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar 
+                                        button.btn.btn-primary(type='submit') Cambiar contraseña 
+                #modalperfil.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+                    .modal-dialog
+                        .modal-content
+                            .modal-header
+                                h5#exampleModalLabel.modal-title Modificar datos de contacto 
+                                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            .modal-body
+                                form(action="#{action}/modificarcontacto", method="post")
+                                    .mb-3
+                                        label.form-label(for='telefono') Cambiar numero de telefono:
+                                        input#telefono.form-control(type='text' name='telefono' placeholder=telefono required ,pattern="^[0-9]+$")
+                                    .mb-3
+                                        label.form-label(for='mail') Cambiar Email:
+                                        input#mail.form-control(type='mail' name='mail' placeholder=email required)
+                                        if(invalido)
+                                            label(for="mail" style="color:red;") *#{invalido} 
+                                    .modal-footer
+                                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                        button.btn.btn-primary(type='submit') Actualizar
+    block content
+
+

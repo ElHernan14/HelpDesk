@@ -1,0 +1,101 @@
+extends ../layout
+
+block content
+    h1(style="background-color:black;color:white") Bienvenido a Area Calidad #{nombre} #{apellido}
+        //EMAIL INCORRECTO
+    if(correcto)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong EnHorabuena!
+            |  #{correcto}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.pushState({}, document.title, "../../gestion/" + "empleados");
+
+    if(invalido)                                                                                    
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalperfil'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "empleados");
+    //CONTRASEÑA INCORRECTA
+    if(cambiada)
+        .alert.alert-info.alert-dismissible.fade.show(role='alert')
+            strong Enhorabuena!
+            |  #{cambiada}
+            button.btn-close(type='button' data-bs-dismiss='alert' aria-label='Close')
+        script.
+                
+            window.history.pushState({}, document.title, "../../gestion/" + "empleados");
+    if(contraseñainvalida)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "empleados");
+    if(noiguales)
+        script.
+            var myModal = new bootstrap.Modal(document.getElementById('modalcontrasena'), {
+                keyboard: false
+            })
+            myModal.show();
+            window.history.pushState({}, document.title, "../../gestion/" + "empleados");
+    br
+    br 
+    a.btn.btn-dark(href='../gestion' style="color:white;margin-left:9%;") Volver
+    br
+    br
+    if(empleados)
+        .container-fluid 
+            .col-10
+                table.table.table-dark.table-striped(style="margin-left:10%;")
+                    thead
+                        tr
+                            th(scope='col') Dni
+                            th(scope='col') Area
+                            th(scope='col') Nombre y apellido
+                            th(scope='col') Telefono
+                            th(scope='col') Email
+                            th(scope='col') Estado
+                            th(scope='col') Gestionar
+                        each value in empleados  
+                            tr
+                                td(style="vertical-align:middle;")= value.dni
+                                td(style="vertical-align:middle;")= value.area
+                                td(style="vertical-align:middle;")= value.nombreApellido
+                                td(style="vertical-align:middle;")= value.telefono 
+                                td(style="vertical-align:middle;")= value.mail 
+                                td(style="vertical-align:middle;")= value.estado
+                                td(style="vertical-align:middle;")
+                                                                        form(action="empleados/estado", method="post")
+                                                                            if value.estado == true
+                                                                                input(type="hidden", name="dni" value=value.dni)
+                                                                                input(type="hidden", name="estado" value=0)
+                                                                                button.btn.btn-danger(style='color:white;' type="submit")  Dar de baja
+                                                                            else 
+                                                                                input(type="hidden", name="dni" value=value.dni)
+                                                                                input(type="hidden", name="estado" value=1)
+                                                                                button.btn.btn-dark(style='color:white;' type="submit")  Dar de alta
+                                                                        a.btn.btn-primary(href="#" style='color:white;' data-bs-toggle='modal' data-bs-target=`#modalarea${value.dni}`)  Cambiar de area
+                                                                    div(id=`modalarea${value.dni}`).modal.fade(style='top: 20%;' tabindex= '-1' )
+                                                                        .modal-dialog
+                                                                            .modal-content
+                                                                                .modal-header
+                                                                                    h5#exampleModalLabel.modal-title(style ="color:black;") Asigne un area:
+                                                                                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                                                .modal-body
+                                                                                    form(action='empleados/modificar' method='post')
+                                                                                        input(type="hidden", name="dni" value=value.dni)
+                                                                                        select#idarea(name="idarea" required)
+                                                                                            option(selected) -- Asignar a un area --
+                                                                                            each area in areas
+                                                                                                option(name="idarea" value=area.id_area) --Area #{area.nombre_area}
+                                                                                        .modal-footer
+                                                                                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                                                                            button.btn.btn-primary(type='submit') Asignar area 
+        
+        
+                                                                                                                                   
+                                                                  

@@ -1,0 +1,80 @@
+extends ../layout 
+
+block content
+    if value.pendientes || value.transferidos || value.resueltos != ''
+                                            .row
+                                                .col-12
+                                                    p
+                                                        .d-grid.gap-2.col-6.mx-auto
+                                                            a.btn.btn-primary(data-bs-toggle='collapse' role='button' aria-expanded='true'  href=`#colapse${value.idUnico}`) Ver transferencias      
+                                                        div(id=`colapse${value.idUnico}`).collapse.multi-collapse
+                                                                br
+                                                                table.table.table-dark.table-striped
+                                                                    thead
+                                                                        tr
+                                                                            th(scope='col') Fecha de ingreso
+                                                                            th(scope='col') Detalle razon
+                                                                            th(scope='col') Area responsable
+                                                                            th(scope='col') Empleado a cargo
+                                                                            th(scope='col') Fecha de egreso
+                                                                        if value[0].transferidos
+                                                                            each trans in value[0].transferidos
+                                                                                tr
+                                                                                    td= trans.fecha_ingreso
+                                                                                    td= trans.detalle_razon
+                                                                                    td= trans.nombreArea  
+                                                                                    td= trans.nombreEmpleado 
+                                                                                    td= trans.fecha_egreso    
+                                            br
+                                            if value.resueltos != ''
+                                                each res in value[0].resueltos
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Detalle solucion:
+                                                        tbody
+                                                            tr 
+                                                                td(style="background-color:black;color:white;opacity:0.9;")= res.detalle_solucion
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Area responsable:
+                                                        tbody 
+                                                            tr 
+                                                                td(style="background-color:black;color:white;opacity:0.9;")= res.nombreArea 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Fecha de Ingreso:
+                                                        tbody 
+                                                            tr 
+                                                                td(style="background-color:black;color:white;opacity:0.9;")= res.fecha_ingreso 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Empleado a cargo:
+                                                        tbody 
+                                                            tr 
+                                                                td(style="background-color:black;color:white;opacity:0.9;")= res.nombreEmpleado 
+                                                    table.table
+                                                        thead.table-dark
+                                                            tr
+                                                                th(scope='col') Fecha de Egreso:
+                                                        tbody 
+                                                            tr 
+                                                                td(style="background-color:black;color:white;opacity:0.9;")= res.fecha_egreso
+                                            if(value.pendientes != null)
+                                                h4 Area actual:
+                                                table.table.table-dark.table-striped
+                                                    thead
+                                                        tr
+                                                            th(scope='col') Fecha de ingreso
+                                                            th(scope='col') Area a cargo
+                                                        each pend in value[0].pendientes
+                                                            tr 
+                                                                td= pend.fecha_ingreso
+                                                                td= pend.nombreArea
+                                        else 
+                                            h3 Su solicitud se encuentra aun en HelpDesk
+    br
+    a.btn.btn-dark(href='../' style="text-decoration:none;margin-left:1%;") Volver al inicio

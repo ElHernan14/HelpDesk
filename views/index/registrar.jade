@@ -1,0 +1,31 @@
+extends ../layout.jade 
+
+block content
+    .container-fluid 
+        .row(style="margin-left:2%;")
+            .col-8
+                form(action='registrar' method='post' style="background-color:black;color:white;padding:10px;")
+                    label.form-label(for='dni') Ingresar DNI: 
+                    input#dni.form-control(type='text' name='dni' pattern="^[0-9]+$" required)
+                    if(msjError)
+                        label.form-label(style="color:red") *#{msjError}
+                    br
+                    label.form-label(for='nombre') Ingresar un nombre: 
+                    input#nombre.form-control(type='text' name='nombre'  pattern="^[A-Z a-z]+$" required)
+                    br
+                    label(.form-labelfor='apellido') Ingrese apellido: 
+                    input#apellido.form-control(type='text' name='apellido'  pattern="^[A-Z a-z]+$" required)
+                    br
+                    label.form-label(for='mail') Ingresar e-mail: 
+                    input#mail.form-control(type='email' name='mail' required)
+                    br
+                    label.form-label(for='celular') Ingresar un celular: 
+                    input#celular.form-control(type='tel' name='celular'  pattern="^[0-9]+$" required)
+                    br
+                    label.form-label(for='contraseña') Ingresar una contrase&ntilde;a: 
+                    input.form-control(type='text' name='contraseña' id='contraseña' required)
+                    br
+                    label.form-label(for='fecha') Ingresar fecha de nacimiento: 
+                    input#nombre.form-control(type='date' name='fecha' required)
+                    br
+                    input.btn.btn-info(type='submit' value='Registrarse')   
